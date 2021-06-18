@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment{
+        webapps='C:\\apache-tomcat-9.0.46-windows-x64\\apache-tomcat-9.0.46\\webapps'
+    }
     tools { 
         maven 'Maven' 
         jdk 'Java_8' 
@@ -16,6 +19,7 @@ pipeline {
             steps {
                     echo "PATH = $PATH"
                     echo "M2_HOME = $M2_HOME"
+                    echo "apache_path = $webapps"
             }
         }
         stage ('GIT Checkout') {
@@ -28,10 +32,11 @@ pipeline {
             steps{
                 bat 'mvn clean install'
             }
-        }   
+        } 
         stage ('Deploy code'){
             steps{
-                echo 'Copy to deploy location'
+                bat 'If EXIST %webapps%\\helloworld-1.1.jar DEL /F %webapps%\\helloworld-1.1.jar '
+                bat 'copy target\\helloworld-1.1.jar %webapps%\\helloworld-1.1.jar'
             }
         }
     }
