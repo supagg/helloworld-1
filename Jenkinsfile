@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        webapps=C:\apache-tomcat-9.0.46-windows-x64\apache-tomcat-9.0.46\webapps
+    }
     tools { 
         maven 'Maven' 
         jdk 'Java_8' 
@@ -28,7 +31,13 @@ pipeline {
             steps{
                 bat 'mvn clean install'
             }
-        }        
+        }   
+        stage ('Deploy code'){
+            steps{
+                bat 'IF EXIST %webapps%\helloworld-1.1.jar DEL /F %webapps%\helloworld-1.1.jar
+                     copy target\helloworld-1.1.jar %webapps%\helloworld-1.1.jar'
+            }
+        }
     }
 
 }
