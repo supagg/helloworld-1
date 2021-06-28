@@ -1,3 +1,5 @@
+properties([parameters([choice(choices: ['TESTING', 'STAGING', 'PRODUCTION'], description: 'The target deployment folder', name: 'DEPLOY_ENV')])])
+
 pipeline {
     agent any
     environment{
@@ -35,10 +37,17 @@ pipeline {
         } 
         stage ('Deploy code'){
             steps{
+                echo "Deploy to this environment ${params.DEPLOY_ENV}"
                 bat 'If EXIST %webapps%\\helloworld-1.1.jar DEL /F %webapps%\\helloworld-1.1.jar '
                 bat 'copy target\\helloworld-1.1.jar %webapps%\\helloworld-1.1.jar'
             }
         }
+        stage ('Build Status'){
+            steps{
+                echo "Build number $BUILD_NUMBER is successful " 
+            }
+        }
+        
     }
 
 }
